@@ -20,30 +20,6 @@ export const serverErrorResponse = (res: any, message: string) => {
   );
 };
 
-export const badRequestResponse = (res: any, message: string) => {
-  res.status(responseCodes.BAD_REQUEST).send(
-    responeObject(responseCodes.BAD_REQUEST, false, null, {
-      message: message ? message : responses.BAD_REQUEST,
-    })
-  );
-};
-
-export const notFoundResponse = (res: any, message: string) => {
-  res.status(responseCodes.NOT_FOUND).send(
-    responeObject(responseCodes.NOT_FOUND, false, null, {
-      message: message ? message : responses.NOT_FOUND,
-    })
-  );
-};
-
-export const unauthorizedResponse = (res: any, message: object | string | Array<string | undefined> | undefined) => {
-  res.status(responseCodes.UNAUTHORIZED).send(
-    responeObject(responseCodes.UNAUTHORIZED, false, null, {
-      message: message ? message : responses.UNAUTHORIZED,
-    })
-  );
-};
-
 export const successResponse = (res: any, dataObj: any) => {
   res
     .status(responseCodes.SUCCESS)

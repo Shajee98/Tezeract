@@ -32,8 +32,12 @@ const Employees = sequelize.define(
     },
     joiningDate: {
       allowNull: false,
-      defaultValue: new Date(),
-      type: DataTypes.DATE  
+      type: DataTypes.STRING  
+    },
+    isActive: {
+      allowNull: false,
+      defaultValue: true,
+      type: DataTypes.BOOLEAN  
     },
     createdAt: {
         field: "created_at",
@@ -55,6 +59,6 @@ const Employees = sequelize.define(
   }
 )
 
-Employees.sync({alter: true})
+// Employees.sync({alter: true})
 
 export default Employees

@@ -5,13 +5,13 @@ import { genericResponseByData, serverErrorResponse, successResponse } from "../
 
 const createEmployee: RequestHandler = async (req, res, next) => {
   try {
-    const { name, position, department_id } = req.body
-    const expereince_level = await employeesService.createEmployee({name, position, department_id})
-    if (!expereince_level) {
+    const { name, position, salary, department_id, joining_date } = req.body
+    const employee = await employeesService.createEmployee({name, position, salary, department_id, joining_date})
+    if (!employee) {
       return serverErrorResponse(res, responses.FAILURE);
     }
 
-    return successResponse(res, {expereince_level});
+    return successResponse(res, {employee});
   } catch (error) {
     next(error)
   }
@@ -23,7 +23,7 @@ const getAllEmployees: RequestHandler = async (req, res, next) => {
   
             if (!employees)
             {
-              return serverErrorResponse(res, responses.SUCCESS)
+              return serverErrorResponse(res, responses.FAILURE)
             }
         
             return res.send(genericResponseByData(employees, { success: responses.SUCCESS }));
@@ -68,10 +68,10 @@ const TopEarners: RequestHandler = async (req, res, next) => {
   
             if (!response_saved)
             {
-              return serverErrorResponse(res, responses.USER_REGISTRATION_FAILURE)
+              return serverErrorResponse(res, responses.FAILURE)
             }
         
-            return res.send(genericResponseByData(response_saved, { success: responses.ADMIN_REGISTRATION_SUCCESS }));
+            return res.send(genericResponseByData(response_saved, { success: responses.SUCCESS }));
       } catch (error) {
         next(error)
       }
@@ -79,8 +79,8 @@ const TopEarners: RequestHandler = async (req, res, next) => {
 
 const retentionRate: RequestHandler = async (req, res, next) => {
     try {
-            const { noOfEmpAtEnd, LeftEmp, EmpAtStart } = req.body
-            const format = await employeesService.retentionRate(noOfEmpAtEnd, LeftEmp, EmpAtStart)
+            const { startDate, endDate } = req.body
+            const format = await employeesService.retentionRate(startDate, endDate)
   
             if (!format)
             {
@@ -100,10 +100,10 @@ const salaryRange: RequestHandler = async (req, res, next) => {
 
     if (!statuses)
     {
-      return serverErrorResponse(res, responses.USER_REGISTRATION_FAILURE)
+      return serverErrorResponse(res, responses.FAILURE)
     }
 
-    return res.send(genericResponseByData(statuses, { success: responses.ADMIN_REGISTRATION_SUCCESS }));
+    return res.send(genericResponseByData(statuses, { success: responses.SUCCESS }));
 } catch (error) {
 next(error)
 }

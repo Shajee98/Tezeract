@@ -2,7 +2,7 @@ const employeeRouter = require("express").Router()
 import employeeController from "../controllers/Employees"
 
 employeeRouter.post(
-  "/create/employees",
+  "/create",
   employeeController.createEmployee
 )
 
@@ -17,7 +17,7 @@ employeeRouter.get(
 )
 
 employeeRouter.get(
-  "/expereince-level",
+  "/experience-level",
   employeeController.experienceLevel
 )
 
@@ -26,7 +26,7 @@ employeeRouter.get(
   employeeController.TopEarners
 )
 
-employeeRouter.post(
+employeeRouter.get(
   "/retention-rate",
   employeeController.retentionRate
 )

@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
 import {
-  badRequestResponse,
   serverErrorResponse,
-} from "../services/Response/Response"
+} from "../utils/Response"
 
 export const handleErrors = (err: any, req: Request, res: Response, next: NextFunction) => {
   console.error("Globally handled error ->", { err });

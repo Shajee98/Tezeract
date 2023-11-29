@@ -6,12 +6,13 @@ import Department from "../../models/Department";
 
 export const createEmployee = async (employeeDetails: any) => {
   try {
-    const { name, position, salary, joining_date } = employeeDetails
+    const { name, position, salary, joining_date, department_id } = employeeDetails
     const employee = await Employees.create({
           name,
           position,
           salary,
           joiningDate: joining_date,
+          departmentId: department_id
         })
 
     return employee
@@ -33,7 +34,7 @@ export const getAllEmployees = async () => {
 export const avgSalary = async () => {
   try {
     const avgSalaries = await Department.findAll({
-      attributes: ['id', [sequelize.fn('AVG', sequelize.col('employee.salary')), 'average_salary']],
+      attributes: ['id', [sequelize.fn('AVG', sequelize.col('employees.salary')), 'average_salary']],
       include: [{
         model: Employees,
         attributes: [],
@@ -76,12 +77,37 @@ export const TopEarners = async (n: number) => {
   }
 };
 
-const retentionRate = async (noOfEmpAtEnd: number, LeftEmp: number, EmpAtStart: number) => {
+const retentionRate = async (startDate: any, endDate: any) => {
   try {
-    
+    const departments = await Department.findAll({
+      attributes: ['id', 'name'],
+      include: [{
+        model: Employees,
+        // attributes: [],
+        where: {
+          [Op.and]: [
+            sequelize.literal(`DATEDIFF(joining_date, ${endDate})`),
+            // is_active: true,
+          ],
+            }
+      }],
+    });
+
+    // const retentionRates = departments.map(department => {
+    //   const totalEmployees = department.Employees.length;
+    //   const retainedEmployees = department.Employees.filter(employee => employee.is_active).length;
+
+    //   const retentionRate = totalEmployees === 0 ? 100 : (retainedEmployees / totalEmployees) * 100;
+
+    //   return {
+    //     departmentId: department.id,
+    //     departmentName: department.name,
+    //     retentionRate: retentionRate.toFixed(2),
+    //   };
+    // });
     
     return {
-      
+      departments
     }
   } catch (error) {
     console.error(error);
@@ -90,23 +116,28 @@ const retentionRate = async (noOfEmpAtEnd: number, LeftEmp: number, EmpAtStart: 
 
 const experienceLevel = async (minExp: number, maxExp: number) => {
   try {
-    const currentDate = new Date();
+    const date = new Date();
+    const currentDate = date.getFullYear().toString() + '-' + date.getMonth().toString() + '-' + date.getDate().toString()
 
+    console.log("currentDate ===> ", currentDate)
     const employees = await Employees.findAll({
       attributes: [
-        [sequelize.fn('DATEDIFF', currentDate, sequelize.col('joining_date')), 'experience'],
+        'id',
+        [sequelize.fn('TIMESTAMPDIFF', 
+        sequelize.literal('YEAR'), 
+        sequelize.col('joining_date'), 
+        sequelize.fn('CURDATE')
+      ), 'experience'],
       ],
       where: {
         [Op.and]: [
-          sequelize.literal(`DATEDIFF('${currentDate}', 'joining_date') >= ${minExp}`),
-          sequelize.literal(`DATEDIFF('${currentDate}', 'joining_date') <= ${maxExp}`),
+          sequelize.literal(`TIMESTAMPDIFF(YEAR, joining_date, CURDATE()) >= ${minExp}`),
+          sequelize.literal(`TIMESTAMPDIFF(YEAR, joining_date, CURDATE()) <= ${maxExp}`),
         ],
       },
     });
     
-    return {
-      employees: employees,
-    }
+    return employees
   } catch (error) {
     console.error(error);
   }
